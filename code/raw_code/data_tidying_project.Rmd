@@ -56,7 +56,7 @@ saveRDS(df2, file = "../../data/raw_data/df_retail.rds")
 
 ```{r wrangle-df2, warning=FALSE} 
 ## an example working with df2
-## let's wrangle!
+## Here we are cleaning up the column names, adding a column for business, filtering the data to look at retail and department store sales, gathering the data to long form 
 df_retail <- df2 %>%
   ## remove the r from the column names of df2
   magrittr::set_colnames(gsub("r","",df2[1,])) %>% 
@@ -76,13 +76,13 @@ df_retail <- df2 %>%
 
 ```{r wrangle-df1, warning=FALSE} 
 ## now, your turn!
-## work with df1
+## Here we are ordering the data by year, determining the sum for each year for ## department stores, and reordering the data to match with df_retail
 df_department <- df1 %>% 
   ## split Period column into one column called "month" and one called "year"
   separate(Period, into = c('month', 'year'), sep = "-") %>%
   ## add a column `value` which contains the 
   ## information from the `Value (in millions)` 
-  mutate(value = df_department$'Value (in millions)') %>%
+  mutate(value = df1$'Value (in millions)') %>%
   ## group the data frame by the `year` column
   group_by(year) %>%
   ## Summarize the data by creating a new column
@@ -99,7 +99,7 @@ df_department <- df1 %>%
 
 ```{r merge-data, warning=FALSE} 
 ## Now, combine the two data frames
-df_total <- function_name()
+df_total <- left_join(df_retail, df_department, by = "n")
 ```
 
 ```{r plot, warning=FALSE, fig.width=10} 
@@ -110,8 +110,4 @@ ggplot(df_retail, aes(x=year,y=n,colour=business)) +
 ## Plot Department Sales data
 ggplot(df_department, aes(x=year,y=n)) +
   geom_point() 
-
-## Plot Combined Data
-ggplot(df_total, aes(x=year,y=as.numeric(n), colour=business)) +
-  geom_point()
 ```
